@@ -3,6 +3,8 @@ from django.conf import settings
 from django.core import validators
 from phonenumbers.util import unicod
 
+def is_nl_machine_to_machine_number(value):
+    return "+31970" in value
 
 class PhoneNumber(phonenumbers.PhoneNumber):
     """
@@ -50,6 +52,9 @@ class PhoneNumber(phonenumbers.PhoneNumber):
         """
         checks whether the number supplied is actually valid
         """
+        check_nl = getattr(settings, "PHONENUMBER_ALLOW_NL_M2M_NUMBER", False)
+        if check_nl and is_nl_machine_to_machine_number(self.raw_input):
+            return True
         return phonenumbers.is_valid_number(self)
 
     def format_as(self, format):
